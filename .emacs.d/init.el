@@ -1,3 +1,9 @@
+;; Copyright (C): 2013 by gnumonk
+;; Copyright(C): 2011 GNUv2
+
+
+;; First check for el-get, if not already there then install from git.
+;; for Debian/Ubuntu/BSD system youn need to install git.
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
@@ -24,6 +30,7 @@
 	 color-theme-solarized
 	 color-theme-tango
 	 color-theme-tango-2
+	 magit
 	 )  
        (mapcar 'el-get-source-name el-get-sources))) 
 
