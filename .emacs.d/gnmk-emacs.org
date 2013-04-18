@@ -1,0 +1,310 @@
+#+TITLE: Emacs Configuration
+#+AUTHOR: Deepak Tripathi
+#+EMAIL: deepak@gnumonk.com
+#+OPTIONS: toc:3 num:nil ^:nil
+# table of contents down to level 2
+# no section numbers
+# don't use TeX syntax for sub and superscripts.
+# See http://orgmode.org/manual/Export-options.html
+# Time-stamp: <2012-10-25 12:43 PDT>
+
+* Emacs Configuration in Org-Mode
+  Why? Because I would like to keep and maintain from one .emacs configurations.
+  The whole thing is driven by the following =init.el=
+  #+BEGIN_EXAMPLE emacs-lisp
+   ;; init.el for this setup. Must use Emacs 24
+  (org-babel-load-file
+  (expand-file-name "gnmk-emacs.org"
+                   user-emacs-directory))
+  #+END_EXAMPLE
+* Emacs custom set variables
+  #+BEGIN_SRC emacs-lisp
+    (custom-set-variables
+     ;; custom-set-variables was added by Custom.
+     ;; If you edit it by hand, you could mess it up, so be careful.
+     ;; Your init file should contain only one such instance.
+     ;; If there is more than one, they won't work right.
+     '(column-number-mode t)
+     '(debian-bug-From-address "Deepak Tripathi <deepak@debian.org>")
+     '(debian-bug-download-directory "~/gnmk_emacsinit/.emacs.d/debianBugDownload")
+     '(debian-bug-helper-program (quote reportbug))
+     '(debian-bug-use-From-address t)
+     '(debian-changelog-date-utc-flag t)
+     '(debian-changelog-mailing-address "deepak@debian.org")
+     '(display-time-day-and-date t)
+     '(display-time-hook nil)
+     '(display-time-mode t)
+     '(display-time-use-mail-icon t)
+     '(epg-gpg-home-directory nil)
+     '(erc-email-userid "deepak")
+     '(erc-enable-logging t)
+     '(erc-header-line-face-method t)
+     '(erc-log-channels-directory "~/emacsinit/erclog")
+     '(erc-log-insert-log-on-open t)
+     '(erc-log-mode t)
+     '(erc-log-write-after-insert t)
+     '(erc-log-write-after-send t)
+     '(erc-minibuffer-notice t)
+     '(erc-nick "gnumonk")
+     '(erc-prompt "gnum0nk>")
+     '(erc-prompt-for-channel-key t)
+     '(erc-prompt-for-password nil)
+     '(erc-public-away-p nil)
+     '(erc-server "irc.debian.org")
+     '(erc-user-full-name "deepak")
+     '(gnus-namazu-index-directories (quote ("/home/gnmk/Jnpr_Mail/namazu/")))
+     '(inhibit-startup-screen t)
+     '(menu-bar-mode nil)
+     '(mime-edit-set-sign "Deepak Tripathi")
+     '(mml-secure-passphrase-cache-expiry 160)
+     '(org-agenda-files (quote ("~/gnmk_emacsinit/org/home.org" "~/gnmk_emacsinit/org/office.org" "~/gnmk_emacsinit/org/personal.org")) t)
+     '(package-user-dir "~/gnmk_emacsinit/.emacs.d/elpa")
+     '(scroll-bar-mode nil)
+     '(shell-command-completion-mode t)
+     '(show-paren-mode t)
+     '(size-indication-mode t)
+     '(sql-sqlite-program "sqlite3")
+     '(tool-bar-mode nil)
+     '(display-battery-mode t)
+     '(global-font-lock-mode t)
+     '(battery-mode-line-format "[%t%B %b%p%% %t]")
+     '(user-mail-address "deepak@gnumonk.com"))
+    
+    ;; Stop debug on error
+    (setq debug-on-error t)
+  #+END_SRC
+* Emacs Org mode load
+ :PROPERTIES:
+ :tangle:   gnmk-org.el
+ :END:
+  #+BEGIN_SRC emacs-lisp 
+   (require 'org-install)
+   (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+   (global-set-key "\C-cl" 'org-store-link)
+   (global-set-key "\C-ca" 'org-agenda)
+   (global-set-key "\C-cb" 'org-iswitchb)
+   (setq org-agenda-files
+         (list "~/gnmk_emacsinit/org/home.org" "~/gnmk_emacsinit/org/office.org" 
+               "~/gnmk_emacsinit/org/personal.org" "~/gnmk_emacsinit/org/work.org" 
+               "~/gnmk_emacsinit/org/debian.org" ))
+   (org-babel-do-load-languages
+    'org-babel-load-languages
+    '( (perl . t)         
+       (ruby . t)
+       (sh . t)
+       (python . t)
+       (emacs-lisp . t)   
+       ))
+  #+END_SRC
+* Emacs Gnus
+   #+BEGIN_SRC emacs-lisp
+     ;;Set path for Gnus, it No Gnus from git
+     (setq load-path (cons (expand-file-name "~/gnmk_gnus/gnus/lisp") load-path))
+     ;; enable gnus
+     (require 'gnus-load)
+   #+END_SRC
+* Emacs Ysnippet
+  #+BEGIN_SRC emacs-lisp
+    ;;Set path for Ysnippet
+    (setq load-path (cons (expand-file-name "~/gnmk_emacsinit/.emacs.d/elpa/yasnippet-bundle-0.6.1") load-path))
+    ;;enable ysnippet
+    (require 'yasnippet-bundle)
+  #+END_SRC
+* Emacs W3 stuff
+  #+BEGIN_SRC emacs-lisp
+    ;; W3m Stuff
+    (add-to-list 'load-path "~/gnmk_emacsinit/.emacs.d/emacs-w3m")
+    (require 'w3m-load)
+    (setq w3m-use-cookies t)
+    (setq browse-url-browser-function 'browse-url-generic
+          browse-url-generic-program "firefox")
+  #+END_SRC
+* Emacs Auto complete 
+  #+BEGIN_SRC emacs-lisp
+
+  #+END_SRC
+* Emacs BigBrother DB
+  #+BEGIN_SRC emacs-lisp
+    (require 'bbdb)
+  #+END_SRC
+* Emacs Tramp
+  #+BEGIN_SRC emacs-lisp
+    (require 'tramp nil t)
+    (setq tramp-default-method "rsync")
+    (add-to-list 'backup-directory-alist
+                 (cons tramp-file-name-regexp nil))
+  #+END_SRC
+* Emacs Eshell
+   :PROPERTIES:
+   :tangle:   gnmk-eshell.el
+   :END:
+  #+BEGIN_SRC emacs-lisp
+    ;; eshell releted works
+    (require 'eshell)
+    ;; (setenv "JAVA_HOME" "/usr/local/java")
+    ;; (setenv "CATALINA_HOME" "/var/lib/tomcat4")
+    (setenv "EDITOR" "emacsclient")
+    (setenv "LC_ALL" "C")
+    ;;(setenv "DEBEMAIL" "Sandra Jean Chua (Sacha) <sacha@free.net.ph>")
+    ;;(setenv "CVSROOT" "sachachua@savannah.nongnu.org:/cvsroot/emacs-wiki")
+    ;;(setenv "PATH" "/usr/local/java/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/home/sacha/bin")
+    (setenv "LANG" "en_US.UTF8")
+    (setenv "EDITOR" "emacsclient")
+    
+    (setq eshell-history-size 20000)
+    (setq eshell-save-history-on-exit t)
+    (setq eshell-hist-ignoredups t)
+    (setq eshell-cmpl-cycle-completions nil)
+    
+    ;; scroll to the bottom
+    (setq eshell-scroll-to-bottom-on-output t)
+    (setq eshell-scroll-show-maximum-output t)
+    ;;(add-to-list 'eshell-output-filter-functions 'eshell-postoutput-scroll-to-bottom)
+    (custom-set-faces
+     ;; custom-set-faces was added by Custom.
+     ;; If you edit it by hand, you could mess it up, so be careful.
+     ;; Your init file should contain only one such instance.
+     ;; If there is more than one, they won't work right.
+     '(minibuffer-prompt ((t (:foreground "red")))))
+    
+    (setq eshell-cmpl-cycle-completions nil
+          eshell-save-history-on-exit t
+          eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'")
+    
+    (eval-after-load 'esh-opt
+      '(progn
+         (require 'em-cmpl)
+         (require 'em-prompt)
+         (require 'em-term)
+         ;; TODO: for some reason requiring this here breaks it, but
+         ;; requiring it after an eshell session is started works fine.
+         ;; (require 'eshell-vc)
+         (setenv "PAGER" "cat")
+                                            ; (set-face-attribute 'eshell-prompt nil :foreground "turquoise1")
+         (add-hook 'eshell-mode-hook ;; for some reason this needs to be a hook
+                   '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
+         (add-to-list 'eshell-visual-commands "ssh")
+         (add-to-list 'eshell-visual-commands "tail")
+         (add-to-list 'eshell-visual-commands "top")
+         (add-to-list 'eshell-command-completions-alist
+                      '("gunzip" "gz\\'"))
+         (add-to-list 'eshell-command-completions-alist
+                      '("tar" "\\(\\.tar|\\.tgz\\|\\.tar\\.gz\\)\\'"))
+         (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)))
+    
+    ;;from http://www.khngai.com/emacs/eshell.php
+    (defun eshell/clear ()
+      "04Dec2001 - sailor, to clear the eshell buffer."
+      (interactive)
+      (let ((inhibit-read-only t))
+        (erase-buffer)))
+    
+    
+    
+    ;; Returns the short propmpt string for eshell
+    (defun eshell-prompt-function-short ()
+    "Makes a short eshell prompt to avoid moving out of the buffer
+    window boundary"
+      (let* ((pwd (eshell/pwd))
+              (pwdlst (split-string pwd "/"))
+               (rpwdlst (reverse pwdlst))
+                (base (car rpwdlst)))
+        (concat (if (string= base "")
+                    "/"
+                        (if (cdr pwdlst) "<...> /" ""))
+                    base
+                        (if (= (user-uid) 0) " # " " $ "))))
+    
+    ;; Returns the long prompt string for eshell
+    (defun eshell-prompt-function-long ()
+    "Makes a long standard eshell prompt"
+      (concat (format-time-string "%l:%M %p") "| "
+                (getenv "USER") "@" (getenv "HOSTNAME") ":"
+                  (eshell/pwd) (if (= (user-uid) 0) " # " " $ ")))
+    
+    (setq eshell-prompt-function
+          'eshell-prompt-function-long)
+    
+    (defun eshell/sprompt ()
+    "Makes a short eshell prompt to avoid moving out of the buffer
+    window boundary (link to eshell-prompt-function-short)"
+      (setq eshell-prompt-function
+            'eshell-prompt-function-short))
+    
+    (defun eshell/lprompt ()
+    "Makes a long standard eshell prompt (link to
+    eshell-prompt-function-long)"
+      (setq eshell-prompt-function
+            'eshell-prompt-function-long))
+    
+      
+  #+END_SRC
+* Emacs ERC
+  #+BEGIN_SRC emacs-lisp
+    ;; (use-package erc
+    ;;              :config
+    ;;              (setq erc-autojoin-channels-alist '(("freenode.net"
+    ;;                                                   "#org-mode"
+    ;;                                                   "#emacs"
+    ;;                                                   "#emacsconf"))
+    ;;                    erc-server "irc.freenode.net"
+    ;;                    erc-nick "deepak"))
+  #+END_SRC
+* Emacs default key binding
+  #+BEGIN_SRC emacs-lisp
+    ;; ;; Function keys
+    (global-set-key [f1] 'manual-entry)
+    (global-set-key [f2] 'find-file)
+    (global-set-key [f3] 'previous-buffer)
+    (global-set-key [f4] 'next-buffer)
+    (global-set-key [f5] 'eval-current-buffer)
+    (global-set-key [f6] 'ibuffer)
+    (global-set-key [f7] 'other-window)
+    (global-set-key [f8] 'rename-buffer)
+    (global-set-key [f9] 'save-buffer)
+    ;;(global-set-key [f10] 'next-error)
+    ;;(global-set-key [f11] 'compile)
+    (global-set-key [f12] 'grep)
+    ;; (global-set-key [C-f1] 'compile)
+    ;; (global-set-key [C-f2] 'grep)
+    ;; (global-set-key [C-f3] 'next-error)
+    ;; (global-set-key [C-f4] 'previous-error)
+    ;; (global-set-key [C-f5] 'display-faces)
+    ;; (global-set-key [C-f8] 'dired)
+    ;; (global-set-key [C-f10] 'kill-compilation)
+    ;; ;; Keypad bindings
+    (global-set-key [up] "\C-p")
+    (global-set-key [down] "\C-n")
+    (global-set-key [left] "\C-b")
+    (global-set-key [right] "\C-f")
+    (global-set-key [home] "\C-a")
+    (global-set-key [end] "\C-e")
+    (global-set-key [prior] "\M-v")
+    (global-set-key [next] "\C-v")
+    (global-set-key [C-up] "\M-\C-b")
+    (global-set-key [C-down] "\M-\C-f")
+    (global-set-key [C-left] "\M-b")
+    (global-set-key [C-right] "\M-f")
+    (global-set-key [C-home] "\M-<")
+    (global-set-key [C-end] "\M->")
+    (global-set-key [C-prior] "\M-<")
+    (global-set-key [C-next] "\M->")
+  #+END_SRC
+* Emacs el-get
+  #+BEGIN_SRC emacs-lisp
+    ;; (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+    ;; (unless (require 'el-get nil 'noerror)
+    ;;   (with-current-buffer
+    ;;       (url-retrieve-synchronously
+    ;;        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    ;;     (goto-char (point-max))
+    ;;     (eval-print-last-sexp)))
+    
+    ;; (el-get 'sync)
+  #+END_SRC
+* Emacs load files
+  #+BEGIN_SRC emacs-lisp
+    (load-file "~/.emacs.d/gnmk-org.el")
+    (load-file "~/.emacs.d/gnmk-eshell.el")
+  #+END_SRC
+  
