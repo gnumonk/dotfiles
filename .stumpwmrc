@@ -82,8 +82,8 @@
 
 (define-key *root-map* (kbd "l") "exec xlock")
 (define-key *top-map* (kbd "XF86AudioMute") "exec amixer -q sset Master toggle")
-(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec amixer -q sset Master %10+")
-(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec amixer -q sset Master %20-")
+(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec amixer -q sset Master 3%+")
+(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec amixer -q sset Master 3%-")
 (define-key *top-map* (kbd "XF86ScreenSaver") "exec xscreensaver-command  -lock")
 
 (define-key *top-map* (kbd "s-1") "gselect screen")
