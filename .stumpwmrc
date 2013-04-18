@@ -1,7 +1,5 @@
 ;; .stumpwmrc --- my own Stumpwm customizations
 ;; Copyright (C) 2012 by gnumonk
-;; -*- Mode: Lisp -*-
-
 (in-package :stumpwm)
 (message "Loading rc!")
 
