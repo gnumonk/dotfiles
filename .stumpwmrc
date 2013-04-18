@@ -1,0 +1,163 @@
+;; .stumpwmrc --- my own Stumpwm customizations
+;; Copyright (C) 2012 by gnumonk
+;; -*- Mode: Lisp -*-
+
+(in-package :stumpwm)
+(message "Loading rc!")
+
+;;(load-module "battery-portable")
+(load-module "disk")
+(run-shell-command "rm .xsession-errors")
+(run-shell-command "xsetroot -cursor_name left_ptr")
+
+
+;; set default font
+(set-font "terminus-iso8859-1-12")
+(setf *mouse-focus-policy* :sloppy) ;; :click, :ignore, :sloppy
+
+;; Customize windows
+;; I like message window to be on top left.
+(setf *message-window-gravity* :center)
+(setf *input-window-gravity* :center)
+(setf *startup-message* "Happy hacking! gnumonk")
+
+(defmacro replace-hook (hook fn)
+  `(remove-hook ,hook ,fn)
+  `(add-hook ,hook ,fn))
+
+;; New groups
+(grename "screen")
+(gnewbg "emacs")
+(gnewbg "Web")
+
+;; reinit
+(defcommand reinit () ()
+            (run-commands "reload" "loadrc"))
+
+;; take screenshot
+(defcommand part-screenshot () ()
+            "Take a screenshot of only the active window."
+            (run-shell-command "scrot -s"))
+(define-key *top-map* (kbd "M-Print") "part-screenshot")
+;; run dmenu 
+;; (define-key *root-map* (kbd "P")
+;;   "exec dmenu_run -i -b -p \"run command:\"")
+;; i like grun over dmenu.
+(define-key *root-map* (kbd "P")
+  "exec grun")
+
+;; resize this fu*king frame to add dzen2 panel
+;; TODO: need to write function to automate for multiple screen.
+;;(stumpwm::resize-head 0 0 25 1400 865)
+;;(stumpwm::resize-head 0 0 25 1440 870)
+
+(defcommand emacs () () (run-or-raise
+                         "emacsclient -c -n" '(:class "Emacs")))
+(define-key *root-map* (kbd "e") "emacs")
+
+;; Need to add this for suspend.
+(defcommand suspend () ()
+            (message "Going into suspend!")
+            (run-shell-command "xterm -e 'sudo /usr/sbin/s2ram --force' "))
+(define-key *root-map* (kbd "F12") "suspend")
+
+(defcommand firefox () ()
+            "run firefox"
+            (run-or-raise "firefox-bin" '(:class "Firefox")))
+(define-key *root-map* (kbd "b") "firefox")
+
+(defcommand urxvt () ()
+            "Start an urxvt instance or switch to it, if it is already running."
+  (run-or-raise "LANG=en_US.UTF-8 urxvt -pe tabbed" '(:instance "urxvt")))
+(define-key *root-map* (kbd "c") "urxvt")
+(define-key *root-map* (kbd "q") "quit")
+(define-key *root-map* (kbd "r") "reinit")
+
+(run-shell-command "which log-event-notify && log-event-notify")
+
+;; remap the key
+(run-shell-command "xmodmap -e \'keycode 135 = F20\'")
+(set-prefix-key (kbd "F20"))
+
+
+(define-key *root-map* (kbd "l") "exec xlock")
+(define-key *top-map* (kbd "XF86AudioMute") "exec amixer -q sset Master toggle")
+(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec amixer -q sset Master %10+")
+(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec amixer -q sset Master %20-")
+(define-key *top-map* (kbd "XF86ScreenSaver") "exec xscreensaver-command  -lock")
+
+(define-key *top-map* (kbd "s-1") "gselect screen")
+(define-key *top-map* (kbd "s-2") "gselect emacs")
+(define-key *top-map* (kbd "s-3") "gselect Web")
+
+;; Customize start hook
+(replace-hook *start-hook* 'gnmk-start-hook)
+(defun gnmk-start-hook ()
+  ;; Keep the X cursor out of the way.
+  ;; (run-with-timer 5 5 'banish-pointer)
+  ;; Change the background and pointer in X
+
+  ;; /home/gnumonk/Downloads/sailing-ship-wallpapers_8849_1600x1200.jpg")
+  ;; (run-shell-command "feh --bg-scale /home/tsp/.wmii-3.5/wallpaper/wmii.jpg")
+  ;; (run-shell-command "xsetbg /home/enigma/media/pictures/artwork/vintage_wallpaper_blue.png")
+  ;;(run-shell-command "(ps aux c | grep -q 'urxvt') || urxvt")
+  ;; (run-shell-command "(ps aux c | grep -q 'have-a-rest') || have-a-rest")
+  ;; Run unclutter so the mouse hangs around no longer than needed.
+  ;;(run-shell-command "unclutter -idle 1 -jitter 2 -root")
+  ;; I use Xscreensaver as a screensaver. The first line makes sure any running Xscreensaver is killed.  
+  ;; The second run regardless of the success of the first & starts a background Xscreensaver daemon
+  ;; (run-shell-command "xscreensaver-command -exit; killall xscreensaver 2>/dev/null; xscreensaver -no-splash")
+  ;; (run-shell-command "dmenu_path")
+  ;;(run-shell-command "fcitx")
+  ;;(run-shell-command "/usr/local/bin/gnmk_dzen2")
+)
+
+;; Load swank.
+;; *prefix-key* ; swank will kick this off
+;;(swank)
+(setf *help-map*
+      (let ((m (make-sparse-keymap)))
+        (define-key m (kbd "m") "man")
+        (define-key m (kbd "i") "info")
+        (define-key m (kbd "v") "describe-variable")
+        (define-key m (kbd "f") "describe-function")
+        (define-key m (kbd "k") "describe-key")
+         (define-key m (kbd "w") "where-is")
+         m))
+
+ ;;(stumpwm::*background* '111111)
+;; (load-module "mpd")
+;; (setf *mpd-modeline-fmt* "%S [%s;%r]: %a - %t (%n/%p)")
+;; (setf *mpd-map*
+;;       (let ((m (make-sparse-keymap)))
+;;         (define-key m (kbd "SPC") "mpd-toggle-pause")
+;;         (define-key m (kbd "s") "mpd-toggle-random")
+;;         (define-key m (kbd "r") "mpd-toggle-repeat")
+;;         (define-key m (kbd "S") "mpd-current-song")
+;;         (define-key m (kbd "P") "mpd-play")
+;;         (define-key m (kbd "q") "mpd-browse-playlist")
+;;         (define-key m (kbd "o") "mpd-stop")
+;;         (define-key m (kbd "n") "mpd-next")
+;;         (define-key m (kbd "p") "mpd-prev")
+;;         (define-key m (kbd "c") "mpd-clear")
+;;         (define-key m (kbd "x") "mpd-connect")
+;;         (define-key m (kbd "k") "mpd-kill")
+;;         (define-key m (kbd "u") "mpd-update")
+;;         (define-key m (kbd "a") "mpd-search-and-add-artist")
+;;         (define-key m (kbd "z") "mpd-playlist")
+;;         (define-key m (kbd "v") "mpd-set-volume")
+;;         (define-key m (kbd "e") "mpd-volume-up")
+;;         (define-key m (kbd "d") "mpd-volume-down")
+;;         (define-key m (kbd "S") '*mpd-search-map*)
+;;         (define-key m (kbd "b") '*mpd-browse-map*)
+;;         (define-key m (kbd "A") '*mpd-add-map*)
+;;         m))
+;; (define-key *top-map* (kbd "s-m") '*mpd-map*)
+(setf *mode-line-background-color* "Black"
+      *mode-line-foreground-color* "White"
+      *mode-line-border-color* "White"
+      *mode-line-timeout* 1
+      *window-format* "^B^8*%n%s%m%30t ::^7*"
+      *group-format* "%t"
+      *screen-mode-line-format* (list "^B|| ||^b^7*%g^B || %w ^1*" 
+))
