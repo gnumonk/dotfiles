@@ -1,4 +1,3 @@
-
 ;; Copyright (C): 2014 by gnumonk
 ;; Copyright(C): 2011 GNUv2
 (require 'package)
