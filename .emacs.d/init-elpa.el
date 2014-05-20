@@ -1,8 +1,6 @@
 
 ;; Copyright (C): 2014 by gnumonk
 ;; Copyright(C): 2011 GNUv2
-;; First check for el-get, if not already there then install from git.
-;; for Debian/Ubuntu/BSD system youn need to install git.
 (require 'package)
 (setq package-archives '(
                          ("ELPA" . "http://tromey.com/elpa/") 
