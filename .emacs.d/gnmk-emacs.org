@@ -7,7 +7,6 @@
 # don't use TeX syntax for sub and superscripts.
 # See http://orgmode.org/manual/Export-options.html
 # Time-stamp: <2012-10-25 12:43 PDT>
-
 * Emacs Configuration in Org-Mode
   Why? Because I would like to keep and maintain from one .emacs configurations.
   The whole thing is driven by the following =init.el=
@@ -17,115 +16,325 @@
   (expand-file-name "gnmk-emacs.org"
                    user-emacs-directory))
   #+END_EXAMPLE
-* Emacs custom set variables
+* Emacs init-elpa
+  :PROPERTIES:
+  :tangle:   init-elpa.el
+  :END:
   #+BEGIN_SRC emacs-lisp
-    (custom-set-variables
-     ;; custom-set-variables was added by Custom.
-     ;; If you edit it by hand, you could mess it up, so be careful.
-     ;; Your init file should contain only one such instance.
-     ;; If there is more than one, they won't work right.
-     '(column-number-mode t)
-     '(debian-bug-From-address "Deepak Tripathi <deepak@debian.org>")
-     '(debian-bug-download-directory "~/gnmk_emacsinit/.emacs.d/debianBugDownload")
-     '(debian-bug-helper-program (quote reportbug))
-     '(debian-bug-use-From-address t)
-     '(debian-changelog-date-utc-flag t)
-     '(debian-changelog-mailing-address "deepak@debian.org")
-     '(display-time-day-and-date t)
-     '(display-time-hook nil)
-     '(display-time-mode t)
-     '(display-time-use-mail-icon t)
-     '(epg-gpg-home-directory nil)
-     '(erc-email-userid "deepak")
-     '(erc-enable-logging t)
-     '(erc-header-line-face-method t)
-     '(erc-log-channels-directory "~/emacsinit/erclog")
-     '(erc-log-insert-log-on-open t)
-     '(erc-log-mode t)
-     '(erc-log-write-after-insert t)
-     '(erc-log-write-after-send t)
-     '(erc-minibuffer-notice t)
-     '(erc-nick "gnumonk")
-     '(erc-prompt "gnum0nk>")
-     '(erc-prompt-for-channel-key t)
-     '(erc-prompt-for-password nil)
-     '(erc-public-away-p nil)
-     '(erc-server "irc.debian.org")
-     '(erc-user-full-name "deepak")
-     '(gnus-namazu-index-directories (quote ("/home/gnmk/Jnpr_Mail/namazu/")))
-     '(inhibit-startup-screen t)
-     '(menu-bar-mode nil)
-     '(mime-edit-set-sign "Deepak Tripathi")
-     '(mml-secure-passphrase-cache-expiry 160)
-     '(org-agenda-files (quote ("~/gnmk_emacsinit/org/home.org" "~/gnmk_emacsinit/org/office.org" "~/gnmk_emacsinit/org/personal.org")) t)
-     '(package-user-dir "~/gnmk_emacsinit/.emacs.d/elpa")
-     '(scroll-bar-mode nil)
-     '(shell-command-completion-mode t)
-     '(show-paren-mode t)
-     '(size-indication-mode t)
-     '(sql-sqlite-program "sqlite3")
-     '(tool-bar-mode nil)
-     '(display-battery-mode t)
-     '(global-font-lock-mode t)
-     '(battery-mode-line-format "[%t%B %b%p%% %t]")
-     '(user-mail-address "deepak@gnumonk.com"))
-    
-    ;; Stop debug on error
-    (setq debug-on-error t)
+    ;; Copyright (C): 2014 by gnumonk
+    ;; Copyright(C): 2011 GNUv2
+    (require 'package)
+    (setq package-archives '(
+                             ("ELPA" . "http://tromey.com/elpa/") 
+                             ("gnu" . "http://elpa.gnu.org/packages/")
+                             ("marmalade" . "http://marmalade-repo.org/packages/")
+                             ("melpa" . "http://melpa.milkbox.net/packages/")
+                             ("org" . "http://orgmode.org/elpa/")
+                             )
+          )
+
+    (package-initialize)
+
+    ;; require-package function taken from below github
+    ;; https://github.com/blueabysm/emacs.d.me/blob/master/init-elpa.el
+    (defun require-package (package &optional min-version no-refresh)
+      "Ask elpa to install given PACKAGE."
+      (if (package-installed-p package min-version)
+          t
+        (if (or (assoc package package-archive-contents) no-refresh)
+            (package-install package)
+          (progn
+            (package-refresh-contents)
+            (require-package package min-version t)))))
+
+    (require-package 'bbdb)
+    (require-package 'erc)
+    (require-package 'boxquote)
+    (require-package 'auto-complete)
+    (require-package 'yasnippet)
+    (require-package 'dired+)
+    (require-package 'erc-view-log)
+    (require-package 'flycheck)
+    (require-package 'flycheck-tcl)
+    (require-package 'flycheck-tip)
+    (require-package 'flymake)
+    (require-package 'flymake-python-pyflakes)
+    (require-package 'flymake-ruby)
+    (require-package 'flymake-shell)
+    (require-package 'color-theme)
+    (require-package 'python-mode)
+    (require-package 'python-pep8)
+    (require-package 'python-pylint)
+    (require-package 'pyvenv)
+    (require-package 'pony-mode)
+    (require-package 'fold-this)
+    (require-package 'grep+)
+    (require-package 'highlight-80+)
+    (require-package 'htmlize)
+    (require-package 'jedi)
+    (require-package 'jedi-direx)
+    (require-package 'magit)
+
+    ;;OSX notifications via the terminal-notifier gem for Emacs ERC.
+    (require-package 'erc-terminal-notifier)
+    ;; Added this becase sometime /usr/local/bin is not set as path and w3m 
+    ;; installation will be fail
+    (require 'org-install)
+    (require 'ob) 
+    (require 'ob-tangle)
+    (setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name)))
+    ;; load up all literate org-mode files in this directory
+    (mapc #'org-babel-load-file (directory-files dotfiles-dir t "\\.org$"))
   #+END_SRC
+
 * Emacs Org mode load
+** org  
  :PROPERTIES:
  :tangle:   gnmk-org.el
  :END:
-  #+BEGIN_SRC emacs-lisp 
-   (require 'org-install)
-   (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-   (global-set-key "\C-cl" 'org-store-link)
-   (global-set-key "\C-ca" 'org-agenda)
-   (global-set-key "\C-cb" 'org-iswitchb)
-   (setq org-agenda-files
-         (list "~/gnmk_emacsinit/org/home.org" "~/gnmk_emacsinit/org/office.org" 
-               "~/gnmk_emacsinit/org/personal.org" "~/gnmk_emacsinit/org/work.org" 
-               "~/gnmk_emacsinit/org/debian.org" ))
-   (org-babel-do-load-languages
-    'org-babel-load-languages
-    '( (perl . t)         
-       (ruby . t)
-       (sh . t)
-       (python . t)
-       (emacs-lisp . t)   
-       ))
+  #+BEGIN_SRC emacs-lisp
+    (require 'org-install)
+    (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+    (global-set-key "\C-cl" 'org-store-link)
+    (global-set-key "\C-ca" 'org-agenda)
+    (global-set-key "\C-cb" 'org-iswitchb)
+
+    (require 'org-depend nil t)
+        (setq org-hide-leading-stars t)
+        (setq org-src-fontify-natively t)
+        (setq org-startup-indented t)
+        (setq org-completion-use-iswitchb t)
+        (setq org-log-done t)
+        (setq org-email-link-description-format "Email %c (%d): %s")
+        (setq org-link-frame-setup
+              '((gnus . org-gnus-no-new-news)
+                (file . find-file)))
+        (setq org-todo-keywords
+              '((sequence "TODO(t!)"
+                          "STARTED(s!)"
+                          "DELEGATED(g@)"
+                          "BLOCKED(b@)"
+                          "FEEDBACK(f!/@)"
+                          "REWORK(r!/!)"
+                          "VERIFY(v/!)"
+                          "|"
+                          "DONE(d!)"
+                          "CANCELED(c@)")
+                (sequence "PROJECT(j!)" "|" "CANCELED(c@)" "DONE(d!)")))
+        (provide 'gnmk-org)
   #+END_SRC
-* Emacs Gnus
+
+  #+RESULTS:
+  : gnmk-org
+
+** org-agenda
+   :PROPERTIES:
+   :tangle:   gnmk-org-agenda.el
+   :END:
    #+BEGIN_SRC emacs-lisp
-     ;;Set path for Gnus, it No Gnus from git
-     (setq load-path (cons (expand-file-name "~/gnmk_gnus/gnus/lisp") load-path))
-     ;; enable gnus
-     (require 'gnus-load)
+     (setq org-agenda-files
+           (list "~/gnmk_emacsinit/org/home.org" "~/gnmk_emacsinit/org/office.org" 
+                 "~/gnmk_emacsinit/org/personal.org" "~/gnmk_emacsinit/org/work.org" 
+                 "~/gnmk_emacsinit/org/debian.org" ))
+     ;; Copy from Julien D. github repository https://github.com/jd
+     
+     (setq org-agenda-category-icon-alist
+           '(("[Ee]macs" "/usr/share/icons/hicolor/16x16/apps/emacs-snapshot.png" nil nil :ascent center)
+             ("Naquadah" "~/.emacs.d/icons/org/naquadah.png" nil nil :ascent center)
+             ("Visitors" "~/.emacs.d/icons/org/visitors.png" nil nil :ascent center)
+             ("\\(Party\\|Celeb\\)" "~/.emacs.d/icons/org/party.png" nil nil :ascent center)
+             ("Wine" "~/.emacs.d/icons/org/wine.png" nil nil :ascent center)
+             ("Gnus" "~/.emacs.d/icons/org/gnus.png" nil nil :ascent center)
+             ("Org" "~/.emacs.d/icons/org/org.png" nil nil :ascent center)
+             ("Medical" "~/.emacs.d/icons/org/medical.png" nil nil :ascent center)
+             ("Music" "~/.emacs.d/icons/org/music.png" nil nil :ascent center)
+             ("Wii" "~/.emacs.d/icons/org/wii.png" nil nil :ascent center)
+             ("Trip" "~/.emacs.d/icons/org/trip.png" nil nil :ascent center)
+             ("Train" "~/.emacs.d/icons/org/train.png" nil nil :ascent center)
+             ("Anniv" "~/.emacs.d/icons/org/anniversary.png" nil nil :ascent center)
+             ("Debian" "~/.emacs.d/icons/org/debian.png" nil nil :ascent center)
+             ("Plants" "~/.emacs.d/icons/org/tree.png" nil nil :ascent center)
+             ("awesome" "~/.emacs.d/icons/org/awesome.png" nil nil :ascent center)
+             ("Solar" "~/.emacs.d/icons/org/solar.png" nil nil :ascent center)
+             ("Reading" "~/.emacs.d/icons/org/book.png" nil nil :ascent center)
+             ("OpenStack" "~/.emacs.d/icons/org/openstack.png" nil nil :ascent center)
+             ("Ceilometer" "~/.emacs.d/icons/org/openstack.png" nil nil :ascent center)
+             ("\\(Holidays\\|Vacation\\)" "~/.emacs.d/icons/org/holidays.png" nil nil :ascent center)
+             (".*" '(space . (:width (16))))))
+     (setq org-agenda-files (list org-directory))
+     (setq org-agenda-custom-commands
+           '(("p" "Projects" todo "PROJECT"
+              ((org-agenda-dim-blocked-tasks t)
+               (org-agenda-skip-scheduled-if-done nil)
+               (org-agenda-skip-deadline-if-done nil)
+               (org-agenda-todo-ignore-with-date nil)
+               (org-agenda-todo-ignore-scheduled nil)
+               (org-agenda-todo-ignore-deadlines nil)))
+             ("b" "Things to buy any time" tags-todo "+tobuy+SCHEDULED=\"\"")
+             ("y" "Syadmin stuff to do" tags-todo "+sysadmin+SCHEDULED=\"\"")))
+     (setq org-agenda-skip-additional-timestamps-same-entry nil)
+     (setq org-agenda-skip-scheduled-if-done t)
+     (setq org-agenda-skip-deadline-if-done t)
+     (setq org-agenda-todo-ignore-timestamp 'future)
+     (setq org-agenda-todo-ignore-scheduled t)
+     (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+     (setq org-agenda-skip-timestamp-if-done t)
+     (setq org-agenda-dim-blocked-tasks 'invisible)
+
+     (provide 'gnmk-org-agenda)   
    #+END_SRC
+
+   #+RESULTS:
+   : gnmk-org-agenda
+
+** org-clock
+   :PROPERTIES:
+   :tangle:   gnmk-org-clock.el
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-clock-in-switch-to-state "STARTED")
+     (setq org-clock-out-remove-zero-time-clocks t)
+     (provide 'gnmk-org-clock)
+   #+END_SRC  
+
+   #+RESULTS:
+   : gnmk-org-clock
+
+** org-crypt
+   :PROPERTIES:
+   :tangle:   gnmk-org-crypt.el
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-crypt-disable-auto-save t)
+     (setq org-crypt-key "7F217B01")
+     (provide 'gnmk-org-crypt)
+
+   #+END_SRC             
+
+   #+RESULTS:
+   : gnmk-org-crypt
+
+** org-faces
+   :PROPERTIES:
+   :tangle:   gnmk-org-faces.el
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-todo-keyword-faces
+           '(("DELEGATED" . shadow)
+             ("STARTED" . org-warning)
+             ("FEEDBACK" . (:foreground "yellow"))
+             ("BLOCKED" . shadow)
+             ("REWORK" . org-warning)
+             ("VERIFY" . org-warning)
+             ("CANCELED" . (:foreground "red" :weight bold :strike-through t))))
+        
+     (provide 'gnmk-org-faces)
+   #+END_SRC
+
+   #+RESULTS:
+   : gnmk-org-faces
+
+** org-footnote
+   :PROPERTIES:
+   :tangle:   gnmk-org-footnote.el
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-footnote-section nil)
+     (setq org-footnote-auto-adjust t)
+     (provide 'gnmk-org-footnote)
+   #+END_SRC
+
+   #+RESULTS:
+   : gnmk-org-footnote
+
+** org-src
+   :PROPERTIES:
+   :tangle:   gnmk-org-src.el
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-src-preserve-indentation t)
+     (provide 'gnmk-org-src)
+   #+END_SRC
+
+   #+RESULTS:
+   : gnmk-org-src
+
+** org-bable
+   :PROPERTIES:
+   :tangle:   gnmk-org-bable.el
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (org-babel-do-load-languages
+      'org-babel-load-languages
+      '( (perl . t)         
+         (ruby . t)
+         (sh . t)
+         (python . t)
+         (emacs-lisp . t)   
+         ))
+     (provide 'gnmk-org-bable)
+   #+END_SRC
+
+   #+RESULTS:
+   : gnmk-org-bable
+* Emacs Email
+:PROPERTIES:
+:tangle:   gnmk-email.el
+:END:
+#+BEGIN_SRC emacs-lisp
+  (defvar gnmk:email-addresses
+    '("deepak\\(-.+\\)?@debian\\.org"
+      "deepak@gnumonk\\.com")
+    "Regexp of my email addreses.")
+
+  (defvar gnmk:email-addresses-regexp
+    (concat "^\\("
+            (mapconcat 'identity gnmk:email-addresses "\\|")
+            "\\)$"))
+
+  (provide 'gnmk-email)
+#+END_SRC
 * Emacs Ysnippet
   #+BEGIN_SRC emacs-lisp
-    ;;Set path for Ysnippet
-    (setq load-path (cons (expand-file-name "~/gnmk_emacsinit/.emacs.d/elpa/yasnippet-bundle-0.6.1") load-path))
     ;;enable ysnippet
-    (require 'yasnippet-bundle)
+    (require 'yasnippet)
   #+END_SRC
 * Emacs W3 stuff
   #+BEGIN_SRC emacs-lisp
     ;; W3m Stuff
     (add-to-list 'load-path "~/gnmk_emacsinit/.emacs.d/emacs-w3m")
-    (require 'w3m-load)
+    (setq w3m-command "/usr/local/bin/w3m")
+    (require 'w3m)
     (setq w3m-use-cookies t)
     (setq browse-url-browser-function 'browse-url-generic
           browse-url-generic-program "firefox")
   #+END_SRC
 * Emacs Auto complete 
   #+BEGIN_SRC emacs-lisp
+    (require 'auto-complete)
+    (semantic-mode 1)
+    (global-ede-mode 1)
+    (require 'auto-complete-config)
+    (ac-config-default)
+    (global-auto-complete-mode t)
 
   #+END_SRC
 * Emacs BigBrother DB
+  :PROPERTIES:
+  :tangle:   gnmk-bbdb.el
+  :END:
   #+BEGIN_SRC emacs-lisp
     (require 'bbdb)
+    (setq bbdb-update-records-p 'create)
+    (setq bbdb-mua-pop-up nil)
+    (setq bbdb-silent t)
+    (setq bbdb-add-name t)
+    (setq bbdb-add-aka t)
+    (setq bbdb-add-mails t)
+    (setq bbdb-new-mails-primary t)
+    (setq bbdb-complete-mail-allow-cycling t)
+    (setq bbdb-allow-duplicates t)
+    (provide 'gnmk-bbdb)
   #+END_SRC
 * Emacs Tramp
   #+BEGIN_SRC emacs-lisp
@@ -150,12 +359,12 @@
     ;;(setenv "PATH" "/usr/local/java/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/home/sacha/bin")
     (setenv "LANG" "en_US.UTF8")
     (setenv "EDITOR" "emacsclient")
-    
+
     (setq eshell-history-size 20000)
     (setq eshell-save-history-on-exit t)
     (setq eshell-hist-ignoredups t)
     (setq eshell-cmpl-cycle-completions nil)
-    
+
     ;; scroll to the bottom
     (setq eshell-scroll-to-bottom-on-output t)
     (setq eshell-scroll-show-maximum-output t)
@@ -166,11 +375,11 @@
      ;; Your init file should contain only one such instance.
      ;; If there is more than one, they won't work right.
      '(minibuffer-prompt ((t (:foreground "red")))))
-    
+
     (setq eshell-cmpl-cycle-completions nil
           eshell-save-history-on-exit t
           eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'")
-    
+
     (eval-after-load 'esh-opt
       '(progn
          (require 'em-cmpl)
@@ -191,16 +400,16 @@
          (add-to-list 'eshell-command-completions-alist
                       '("tar" "\\(\\.tar|\\.tgz\\|\\.tar\\.gz\\)\\'"))
          (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)))
-    
+
     ;;from http://www.khngai.com/emacs/eshell.php
     (defun eshell/clear ()
       "04Dec2001 - sailor, to clear the eshell buffer."
       (interactive)
       (let ((inhibit-read-only t))
         (erase-buffer)))
-    
-    
-    
+
+
+
     ;; Returns the short propmpt string for eshell
     (defun eshell-prompt-function-short ()
     "Makes a short eshell prompt to avoid moving out of the buffer
@@ -214,31 +423,35 @@
                         (if (cdr pwdlst) "<...> /" ""))
                     base
                         (if (= (user-uid) 0) " # " " $ "))))
-    
+
     ;; Returns the long prompt string for eshell
     (defun eshell-prompt-function-long ()
     "Makes a long standard eshell prompt"
       (concat (format-time-string "%l:%M %p") "| "
                 (getenv "USER") "@" (getenv "HOSTNAME") ":"
                   (eshell/pwd) (if (= (user-uid) 0) " # " " $ ")))
-    
+
     (setq eshell-prompt-function
           'eshell-prompt-function-long)
-    
+
     (defun eshell/sprompt ()
     "Makes a short eshell prompt to avoid moving out of the buffer
     window boundary (link to eshell-prompt-function-short)"
       (setq eshell-prompt-function
             'eshell-prompt-function-short))
-    
+
     (defun eshell/lprompt ()
     "Makes a long standard eshell prompt (link to
     eshell-prompt-function-long)"
       (setq eshell-prompt-function
             'eshell-prompt-function-long))
-    
-      
+
+    (provide 'gnmk-eshell)
   #+END_SRC
+
+  #+RESULTS:
+  : gnmk-eshell
+
 * Emacs ERC
   #+BEGIN_SRC emacs-lisp
     ;; (use-package erc
@@ -290,21 +503,124 @@
     (global-set-key [C-prior] "\M-<")
     (global-set-key [C-next] "\M->")
   #+END_SRC
-* Emacs el-get
+* Emacs Python
+:PROPERTIES:
+:tangle:   gnmk-python.el
+:END:
+#+BEGIN_SRC emacs-lisp
+  ;;enable jedi autocompletion
+  ;; (autoload 'jedi:setup "jedi" nil t)
+  ;; (add-hook 'python-mode-hook 'auto-complete-mode)
+  ;; (setq jedi:setup-keys t)
+  ;; (setq jedi:complete-on-dot t)
+  ;;enable flycheck
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  (require 'autopair)
+  (autopair-global-mode) ;; to enable in all buffers
+  (add-hook 'python-mode-hook 'elpy-enable)
+  (setq elpy-interactive-python-command "/usr/local/bin/python3.4")
+  (setq elpy-rpc-python-command "/usr/local/bin/python3.4")
+  (require 'python)
+  (define-key python-mode-map (kbd "C-c C-c")
+    (lambda () (interactive) (python-shell-send-buffer t)))
+
+
+#+END_SRC
+* Emacs dired
+  :PROPERTIES:
+  :tangle:   gnmk-dired.el
+  :END:
   #+BEGIN_SRC emacs-lisp
-    ;; (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-    ;; (unless (require 'el-get nil 'noerror)
-    ;;   (with-current-buffer
-    ;;       (url-retrieve-synchronously
-    ;;        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    ;;     (goto-char (point-max))
-    ;;     (eval-print-last-sexp)))
-    
-    ;; (el-get 'sync)
+    (setq dired-recursive-deletes 'always)
+    (setq dired-listing-switches "-alh")
+    (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)  
+    (provide 'gnmk-dired)
+  #+END_SRC
+
+  #+RESULTS:
+  : gnmk-dired
+* Emacs custom set variables
+  #+BEGIN_SRC emacs-lisp
+     (custom-set-variables
+      ;; custom-set-variables was added by Custom.
+      ;; If you edit it by hand, you could mess it up, so be careful.
+      ;; Your init file should contain only one such instance.
+      ;; If there is more than one, they won't work right.
+      '(column-number-mode t)
+      '(debian-bug-From-address "Deepak Tripathi <deepak@debian.org>")
+      '(debian-bug-download-directory "~/gnmk_emacsinit/.emacs.d/debianBugDownload")
+      '(debian-bug-helper-program (quote reportbug))
+      '(debian-bug-use-From-address t)
+      '(debian-changelog-date-utc-flag t)
+      '(debian-changelog-mailing-address "deepak@debian.org")
+      '(display-time-day-and-date t)
+      '(display-time-hook nil)
+      '(display-time-mode t)
+      '(display-time-use-mail-icon t)
+      '(elpy-interactive-python-command "/usr/local/bin/python3.4")
+      '(epg-gpg-home-directory nil)
+      '(erc-email-userid "deepak")
+      '(erc-enable-logging t)
+      '(erc-header-line-face-method t)
+      '(erc-log-channels-directory "~/emacsinit/erclog")
+      '(erc-log-insert-log-on-open t)
+      '(erc-log-mode t)
+      '(erc-log-write-after-insert t)
+      '(erc-log-write-after-send t)
+      '(erc-minibuffer-notice t)
+      '(erc-nick "gnumonk")
+      '(erc-prompt "gnum0nk>")
+      '(erc-prompt-for-channel-key t)
+      '(erc-prompt-for-password nil)
+      '(erc-public-away-p nil)
+      '(erc-server "irc.debian.org")
+      '(erc-user-full-name "deepak")
+      '(gnus-namazu-index-directories (quote ("/home/gnmk/Jnpr_Mail/namazu/")))
+      '(inhibit-startup-screen t)
+      '(menu-bar-mode nil)
+      '(mime-edit-set-sign "Deepak Tripathi")
+      '(mml-secure-passphrase-cache-expiry 160)
+      '(org-agenda-files (quote ("~/gnmk_emacsinit/org/home.org" "~/gnmk_emacsinit/org/office.org" "~/gnmk_emacsinit/org/personal.org")) t)
+      '(package-user-dir "~/.emacs.d/elpa")
+      '(scroll-bar-mode nil)
+      '(shell-command-completion-mode t)
+      '(show-paren-mode t)
+      '(size-indication-mode t)
+      '(sql-sqlite-program "sqlite3")
+      '(tool-bar-mode nil)
+      '(global-font-lock-mode t)
+      '(user-mail-address "deepak@gnumonk.com")
+      )
+
+     ;; Stop debug on error
+     (global-set-key "\C-x\C-m" 'execute-extended-command)
+     (global-set-key "\C-c\C-m" 'execute-extended-command)
+     (global-ede-mode 1)
+     (require 'semantic/sb)
+     (semantic-mode 1)
+
+     (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+     (setq exec-path (append exec-path '("/usr/local/bin")))
+    (if (eq window-system 'ns)
+        (set-face-attribute 'default nil :font "Ubuntu Mono" :height 170  :weight 'light))
+
+    ;; enable ido mode
+
+    (require 'ido)
+    (ido-mode t)
   #+END_SRC
 * Emacs load files
   #+BEGIN_SRC emacs-lisp
-    (load-file "~/.emacs.d/gnmk-org.el")
+    (load-file "~/.emacs.d/gnmk-bbdb.el")
     (load-file "~/.emacs.d/gnmk-eshell.el")
+    (load-file "~/.emacs.d/gnmk-org.el")
+    (load-file "~/.emacs.d/gnmk-org-agenda.el")
+    (load-file "~/.emacs.d/gnmk-org-clock.el")
+    (load-file "~/.emacs.d/gnmk-org-crypt.el")
+    (load-file "~/.emacs.d/gnmk-org-faces.el")
+    (load-file "~/.emacs.d/gnmk-org-footnote.el")
+    (load-file "~/.emacs.d/gnmk-email.el")
+    (load-file "~/.emacs.d/gnmk-python.el")
   #+END_SRC
+  
   

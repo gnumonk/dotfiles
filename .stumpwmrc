@@ -74,8 +74,8 @@
 (run-shell-command "which log-event-notify && log-event-notify")
 
 ;; remap the key
-(run-shell-command "xmodmap -e \'keycode 135 = F20\'")
-(set-prefix-key (kbd "F20"))
+;;(run-shell-command "xmodmap -e \'keycode 135 = F20\'")
+;;(set-prefix-key (kbd "F20"))
 
 
 (define-key *root-map* (kbd "l") "exec xlock")
@@ -151,11 +151,11 @@
 ;;         (define-key m (kbd "A") '*mpd-add-map*)
 ;;         m))
 ;; (define-key *top-map* (kbd "s-m") '*mpd-map*)
-(setf *mode-line-background-color* "Black"
-      *mode-line-foreground-color* "White"
-      *mode-line-border-color* "White"
-      *mode-line-timeout* 1
-      *window-format* "^B^8*%n%s%m%30t ::^7*"
-      *group-format* "%t"
-      *screen-mode-line-format* (list "^B|| ||^b^7*%g^B || %w ^1*" 
-))
+;;(setf *mode-line-background-color* "Black"
+ ;;     *mode-line-foreground-color* "White"
+  ;;    *mode-line-border-color* "White"
+  ;;    *mode-line-timeout* 1
+  ;;    *window-format* "^B^8*%n%s%m%30t ::^7*"
+  ;;    *group-format* "%t"
+  ;;    *screen-mode-line-format* (list "^B|| ||^b^7*%g^B || %w ^1*" 
+;;))
