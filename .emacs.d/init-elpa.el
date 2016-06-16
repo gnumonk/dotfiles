@@ -1,5 +1,5 @@
-;; Copyright (C): 2014 by gnumonk
-;; Copyright(C): 2011 GNUv2
+;; Copyright (C): 2016 by gnumonk
+;; Copyright(C): 2016 GNUv2
 (require 'package)
 (setq package-archives '(
                          ("ELPA" . "http://tromey.com/elpa/") 
