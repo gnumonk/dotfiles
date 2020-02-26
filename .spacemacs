@@ -30,7 +30,8 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(yaml
+   '(sql
+     yaml
      markdown
      javascript
      ;; ----------------------------------------------------------------
@@ -64,6 +65,8 @@ values."
      spell-checking
      syntax-checking
      version-control
+     (java :variables java-backend 'lsp)
+
      (treemacs :variables
                treemacs-use-follow-mode t
                treemacs-use-filewatch-mode t
@@ -77,6 +80,12 @@ values."
                                       bbdb
                                       nodejs-repl
                                       xref-js2
+                                      dap-mode
+                                      lsp-mode
+                                      lsp-java
+                                      company-lsp
+                                      restclient-helm
+                                      restclient
                                       )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -149,9 +158,9 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(default
+   dotspacemacs-themes '(spacemacs-light
                          spacemacs-dark
-                         spacemacs-light)
+                         default)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
@@ -380,7 +389,43 @@ you should place your code here."
   ;;       bbdb-layout 'one-line ;; one-line, multi-line, full-multi-line (t or T)
   ;;       bbdb-pop-up-window-size 5
   ;;             bbdb-complete-mail-allow-cycling t) 
+  (require 'lsp-java)
+  (add-hook 'java-mode-hook 'lsp)
+  (require 'dap-mode)
+  (add-hook 'java-mode-hook 'dap-mode)
+  (condition-case nil
+      (require 'use-package)
+    (file-error
+     (require 'package)
+     (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+     (package-initialize)
+     (package-refresh-contents)
+     (package-install 'use-package)
+     (require 'use-package)))
 
+  (use-package projectile :ensure t)
+  (use-package yasnippet :ensure t)
+  (use-package lsp-mode :ensure t)
+  (use-package hydra :ensure t)
+  (use-package company-lsp :ensure t)
+  (use-package lsp-ui :ensure t)
+  (use-package lsp-java :ensure t :after lsp
+    :config (add-hook 'java-mode-hook 'lsp))
+
+  (use-package dap-mode
+    :ensure t :after lsp-mode
+    :config
+    (dap-mode t)
+    (dap-ui-mode t))
+
+  (use-package dap-java :after (lsp-java))
+  (require 'lsp-java-boot)
+
+  ;; to enable the lenses
+  (add-hook 'lsp-mode-hook #'lsp-lens-mode)
+  (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+  
   )
 
 
@@ -425,12 +470,13 @@ This function is called at the very end of Spacemacs initialization."
  '(menu-bar-mode nil)
  '(package-selected-packages
    (quote
-    (js-auto-beautify xref-js2 mmm-mode bbdb- spacemacs-theme defaults-theme color-theme yapfify web-mode web-beautify tagedit slim-mode scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode pip-requirements org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download livid-mode skewer-mode simple-httpd live-py-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc hy-mode htmlize helm-pydoc helm-css-scss haml-mode gnuplot emmet-mode cython-mode company-web web-completion-data company-tern dash-functional tern company-anaconda coffee-mode anaconda-mode pythonic ibuffer-projectile company-quickhelp xterm-color smeargle shell-pop orgit multi-term magit-gitflow helm-gitignore helm-company helm-c-yasnippet gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit with-editor eshell-z eshell-prompt-extras esh-help diff-hl company-statistics company auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
+    (gnu-elpa-keyring-update flycheck-vdm sqlup-mode sql-indent bbdb- spacemacs-theme defaults-theme color-theme yapfify web-mode web-beautify tagedit slim-mode scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode pip-requirements org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download livid-mode skewer-mode simple-httpd live-py-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc hy-mode htmlize helm-pydoc helm-css-scss haml-mode gnuplot emmet-mode cython-mode company-web web-completion-data company-tern dash-functional tern company-anaconda coffee-mode anaconda-mode pythonic ibuffer-projectile company-quickhelp xterm-color smeargle shell-pop orgit multi-term magit-gitflow helm-gitignore helm-company helm-c-yasnippet gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit with-editor eshell-z eshell-prompt-extras esh-help diff-hl company-statistics company auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Ubuntu Mono" :foundry "DAMA" :slant normal :weight normal :height 113 :width normal)))))
+ '(default ((t (:family "Ubuntu Mono" :foundry "DAMA" :slant normal :weight normal :height 113 :width normal))))
+ '(lsp-ui-sideline-code-action ((t (:foreground "gray0")))))
 )
