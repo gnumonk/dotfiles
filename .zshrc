@@ -5,7 +5,8 @@ export ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="gentoo"
+#ZSH_THEME="gentoo"
+ZSH_THEME="mh"
 TERM=rxvt
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -56,10 +57,6 @@ export PATH=$PATH:/volume/buildtools/bin:/volume/labtools/bin
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
-alias ec="TERM=xterm-256color /usr/local/bin/emacsclient -c -nw -s dtripathi"
-alias et="TERM=xterm-256color /usr/local/bin/emacsclient -t"
-alias 139-ssh="ssh root@10.206.96.139"
-alias 124-ssh="ssh root@10.206.96.124"
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
@@ -88,3 +85,10 @@ export CLICOLOR=1
 export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 # # Tell grep to highlight matches
 export GREP_OPTIONS='--color=auto'
+alias emacsdaemon="/Applications/Emacs.app/Contents/MacOS/Emacs --daemon"
+alias et="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -t"
+alias ec="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n -c"
+alias wd="cd Documents/RSync/Work/Kalpakosh/OnlineTestSeries" 
+
+# Dir: current working directory
+alias wd="cd ~/Documents/RSync/Work/Kalpakosh/OnlineTestSeries" 
