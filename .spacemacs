@@ -30,8 +30,13 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(sql
+   '(nginx
+     typescript
+     sql
      yaml
+     (docker :variables
+             docker-dockerfile-backend 'lsp
+             )
      markdown
      javascript
      ;; ----------------------------------------------------------------
@@ -56,7 +61,9 @@ values."
      ;; markdown
      (javascript :variables
                  javascript-disable-tern-port-files nil)
-     html
+     (html :variables
+           web-fmt-tool 'web-beautify
+           )
      python
      org
      (shell :variables
@@ -345,6 +352,7 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  (setq-default typescript-indent-level 2)
   (setq global-company-mode t)
   (setq global-auto-complete-mode t)
   (require 'bbdb)
@@ -436,6 +444,15 @@ you should place your code here."
           ('darwin "mdfind -name %s %s")
           (t "locate %s")))
   )
+
+(setq lsp-clients-angular-language-server-command
+      '("node"
+        "/usr/lib/node_modules/@angular/language-server"
+        "--ngProbeLocations"
+        "/usr/lib/node_modules"
+        "--tsProbeLocations"
+        "/usr/lib/node_modules"
+        "--stdio"))
 
 
 ;; Do not write anything past this comment. This is where Emacs will

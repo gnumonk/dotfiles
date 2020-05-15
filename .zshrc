@@ -52,7 +52,7 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-export PATH=$PATH:/volume/buildtools/bin:/volume/labtools/bin
+export PATH=$PATH:/Users/gnmk/Downloads/apache-geode-1.12.0/bin
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
@@ -86,7 +86,7 @@ export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 # # Tell grep to highlight matches
 export GREP_OPTIONS='--color=auto'
 alias emacsdaemon="/Applications/Emacs.app/Contents/MacOS/Emacs --daemon"
-alias et="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -t"
+alias et="TERM=xterm-256color /Applications/Emacs.app/Contents/MacOS/bin/emacsclient -t"
 alias ec="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n -c"
 alias wd="cd Documents/RSync/Work/Kalpakosh/OnlineTestSeries" 
 
