@@ -52,7 +52,7 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-export PATH=$PATH:/Users/gnmk/Downloads/apache-geode-1.12.0/bin
+export PATH=$PATH:/Users/gnmk/AndroidStudioProjects/SDK/flutter/bin/
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
